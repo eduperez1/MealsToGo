@@ -1,20 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StatusBar as ExpoStatusBar } from "expo-status-bar";
+import { ThemeProvider } from "styled-components/native";
+import { theme } from "./src/infrastructure/theme";
+import * as firebase from 'firebase';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
+
+import { Navigation } from "./src/infrastructure/navigation";
+
+import { useFonts as useOswald, Oswald_400Regular } from '@expo-google-fonts/oswald';
+import { useFonts as useLato, Lato_400Regular } from '@expo-google-fonts/lato';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_yuJCmDanO7Q_8GftAFEVTClcW-zHDi8",
+  authDomain: "mealstogo-3fb47.firebaseapp.com",
+  projectId: "mealstogo-3fb47",
+  storageBucket: "mealstogo-3fb47.appspot.com",
+  messagingSenderId: "293159224934",
+  appId: "1:293159224934:web:e75504f3e8a31004cecfa7"
+};
+
+if(!firebase.apps.length){
+  firebase.initializeApp(firebaseConfig);
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  
+  const [oswaldLoaded] = useOswald({
+    Oswald_400Regular,
+  });
+
+  const [latoLoaded] = useLato({
+    Lato_400Regular,
+  });
+
+  if(!oswaldLoaded || !latoLoaded){
+    return null;
+  }
+
+  return (
+    <>
+      <ThemeProvider theme={theme}>
+        <AuthenticationContextProvider>
+          <Navigation/>
+        </AuthenticationContextProvider>
+      </ThemeProvider>
+      <ExpoStatusBar style="auto"/>
+    </>
+  );
+}
